@@ -4,7 +4,7 @@ import string
 
 class GetTestDate:
     def __init__(self):
-        self.level_set = [i for i in range(4)]
+        self.level_set = [i for i in range(20)]
         self.position_set = [i for i in range(2)]
         self.letter = string.ascii_lowercase
         self.position_num = [i+1 for i in range(2)]
@@ -27,5 +27,5 @@ class GetTestDate:
 
 if __name__ == "__main__":
     get_data = GetTestDate()
-    infos = get_data.get_player_info(10)
+    infos = get_data.get_player_info(15)
     print(infos)

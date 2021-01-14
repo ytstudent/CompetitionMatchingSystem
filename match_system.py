@@ -8,15 +8,20 @@ class MatchSystem:
         self.position_set = [i for i in range(3)]
         self.player_info = player_info
 
-    def get_match_result(self, game_num, max_level_diff=100):
-        player_game_num_dict = {player: 0 for player, info in self.player_info.items()}
+    def get_match_result(self, game_num, max_level_diff=2):
+        player_game_num_dict = {player: 0 for player, _ in self.player_info.items()}
         while self.not_touch_max_num(player_game_num_dict, game_num):
+            # print('===' * 30)
             # step_1：选出第一支队伍
             player_game_num_sorted = sorted(player_game_num_dict.items(), key=lambda x: x[1])
             first_player, first_play_num = player_game_num_sorted.pop(0)
             cnt_dict = self.get_new_dict_by_value(player_game_num_sorted)
+            # print('--' * 30)
+            # print(cnt_dict)
             cnt_dict_sorted = sorted(cnt_dict.items(), key=lambda x: x[0])
             rest_player_list = self.splice_list_in_dict_items(cnt_dict_sorted)
+            # print('--' * 30)
+            # print(rest_player_list)
             _, min_cnt_list = cnt_dict_sorted[0]
             second_player = random.choice(min_cnt_list)
             rest_player_list.remove(second_player)
@@ -68,9 +73,11 @@ class MatchSystem:
                         break
 
             if not sixth_player_list:
-                # if not position_rest
+                if not position_rest:
+                    self.get_match_result(game_num, max_level_diff)
+                    return
                 level_dict = {p: self.player_info[p]["level"] for p in position_rest}
-                level_list_sorted = sorted(level_dict, key=lambda x: x[1])
+                level_list_sorted = sorted(level_dict.items(), key=lambda x: x[1])
                 min_level_player, min_level = level_list_sorted[0]
                 max_level_player, max_level = level_list_sorted[len(level_list_sorted) - 1]
                 if other_team_level > team_level:
@@ -80,22 +87,12 @@ class MatchSystem:
                 sixth_player = sixth_player
             else:
                 sixth_player = sixth_player_list[0]
-
             print([first_player, second_player, third_player],
                   [fourth_player, fifth_player, sixth_player])
             player_game_num_dict[fourth_player] += 1
             player_game_num_dict[fifth_player] += 1
             player_game_num_dict[sixth_player] += 1
-
         print(player_game_num_dict)
-
-    @staticmethod
-    def del_max_num_player(player_game_num_dict, max_num):
-        copy_dict = deepcopy(player_game_num_dict)
-        for player, num in player_game_num_dict.items():
-            if num >= max_num:
-                del copy_dict[player]
-        return copy_dict
 
     @staticmethod
     def not_touch_max_num(player_game_num_dict, max_num):
@@ -126,8 +123,8 @@ class MatchSystem:
 
 if __name__ == "__main__":
     get_data = GetTestDate()
-    infos = get_data.get_player_info(24)
+    infos = get_data.get_player_info(10)
     print(infos)
     print("**" * 30)
     ms = MatchSystem(infos)
-    ms.get_match_result(8)
+    ms.get_match_result(5)
